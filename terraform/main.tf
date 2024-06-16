@@ -4,13 +4,13 @@
 resource "age_secret_key" "this" {}
 
 resource "local_file" "this" {
+  filename = "sops.yaml"
   content  = <<-EOT
   creation_rules:
     - path_regex: .*.yaml
       encrypted_regex: ^(data|stringData)$
       age: ${age_secret_key.this.public_key}
   EOT
-  filename = "sops.yaml"
 }
 
 resource "kubernetes_namespace" "flux_system" {
