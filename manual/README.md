@@ -1,4 +1,4 @@
-# Talos / Deployment Flux / Manual
+# Provisioning / GitOps / Flux / Manual
 
 ## Prerequisite
 
