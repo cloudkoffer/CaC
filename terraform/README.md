@@ -8,13 +8,6 @@
 
 ## Installation
 
-- Configure environment variables.
-
-  ``` shell
-  CLOUDKOFFER=v3 # v1, v2, v3
-  CLUSTER_NAME="talos-cloudkoffer-${CLOUDKOFFER}"
-  ```
-
 - Initialise Terraform state.
 
   ``` shell
@@ -36,11 +29,13 @@
 - Execute a Terraform plan.
 
   ``` shell
-  terraform plan -var="cluster_name=${CLUSTER_NAME}"
+  export TF_VAR_github_token=<github-token>
+  terraform plan
   ```
 
 - Execute a Terraform apply.
 
   ``` shell
-  terraform apply -var="cluster_name=${CLUSTER_NAME}"
+  export TF_VAR_github_token=<github-token>
+  terraform apply
   ```

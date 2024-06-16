@@ -10,7 +10,7 @@ resource "local_file" "this" {
       encrypted_regex: ^(data|stringData)$
       age: ${age_secret_key.this.public_key}
   EOT
-  filename = "configs/${var.cluster_name}.sops.yaml"
+  filename = "sops.yaml"
 }
 
 resource "kubernetes_namespace" "flux_system" {
@@ -38,7 +38,7 @@ resource "kubernetes_secret" "sops_age" {
 # Flux Bootstrap
 
 resource "flux_bootstrap_git" "this" {
-  path           = "clusters/${var.cluster_name}"
+  path           = "cluster"
   version        = "v2.3.0" # https://github.com/fluxcd/flux2/releases
   log_level      = "info"   # debug, info, error
   network_policy = false
