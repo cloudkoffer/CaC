@@ -4,7 +4,7 @@
 resource "age_secret_key" "this" {}
 
 resource "local_file" "this" {
-  content = <<-EOT
+  content  = <<-EOT
   creation_rules:
     - path_regex: .*.yaml
       encrypted_regex: ^(data|stringData)$
