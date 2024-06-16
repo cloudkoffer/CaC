@@ -1,4 +1,4 @@
-# Talos / Deployment Flux / Terraform
+# Provisioning / GitOps / Flux / Terraform
 
 ## Prerequisite
 
