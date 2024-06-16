@@ -13,7 +13,7 @@
 - Configure environment variables.
 
   ``` shell
-  CLOUDKOFFER="v3" # v1, v2, v3
+  CLOUDKOFFER=v3 # v1, v2, v3
   CLUSTER_NAME="talos-cloudkoffer-${CLOUDKOFFER}"
   ```
 
@@ -53,7 +53,7 @@
 
   ``` shell
   # Needs 'Admin' role on the repository 'cloud-native-explab'
-  export GITHUB_TOKEN="<my-token>"
+  export GITHUB_TOKEN=<my-token>
 
   # https://fluxcd.io/flux/cmd/flux_bootstrap_github/
   flux bootstrap github \

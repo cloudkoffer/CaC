@@ -1,21 +1,22 @@
 ################################################################################
 # SOPS Age Key
 
+resource "age_secret_key" "this" {}
+
+resource "local_file" "this" {
+  content = <<-EOT
+  creation_rules:
+    - path_regex: .*.yaml
+      encrypted_regex: ^(data|stringData)$
+      age: ${age_secret_key.this.public_key}
+  EOT
+  filename = "configs/${var.cluster_name}.sops.yaml"
+}
+
 resource "kubernetes_namespace" "flux_system" {
   metadata {
     name = "flux-system"
   }
-}
-
-resource "age_secret_key" "this" {}
-
-resource "local_file" "this" {
-  content = templatefile("tftpl/.sops.yaml",
-    {
-      public_key = age_secret_key.this.public_key,
-    }
-  )
-  filename = "../../deployment-stack/configs/${var.cluster_name}.sops.yaml"
 }
 
 resource "kubernetes_secret" "sops_age" {
@@ -25,42 +26,24 @@ resource "kubernetes_secret" "sops_age" {
   }
 
   data = {
-    "age.agekey" = templatefile("tftpl/age.agekey",
-      {
-        public_key = age_secret_key.this.public_key,
-        secret_key = age_secret_key.this.secret_key,
-      }
-    )
+    "age.agekey" = <<-EOT
+    # created: 2024-01-01T00:00:00+01:00
+    # public key: ${age_secret_key.this.public_key}
+    ${age_secret_key.this.secret_key}
+    EOT
   }
 }
 
 ################################################################################
-# GitHub Deploy Key and Flux Bootstrap
-
-resource "tls_private_key" "this" {
-  algorithm = "ED25519"
-}
-
-data "github_repository" "this" {
-  name = "cloud-native-explab"
-}
-
-resource "github_repository_deploy_key" "this" {
-  title      = var.cluster_name
-  repository = data.github_repository.this.name
-  key        = tls_private_key.this.public_key_openssh
-  read_only  = false
-}
+# Flux Bootstrap
 
 resource "flux_bootstrap_git" "this" {
-  path           = "clusters/bare/${var.cluster_name}"
-  interval       = "1m0s"
-  version        = "v2.0.0-rc.5" # https://github.com/fluxcd/flux2/releases
-  log_level      = "info"        # debug, info, error
+  path           = "clusters/${var.cluster_name}"
+  version        = "v2.3.0" # https://github.com/fluxcd/flux2/releases
+  log_level      = "info"   # debug, info, error
   network_policy = false
 
   depends_on = [
-    github_repository_deploy_key.this,
     kubernetes_secret.sops_age,
   ]
 }
